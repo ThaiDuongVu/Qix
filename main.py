@@ -2,8 +2,9 @@ import sys
 import pygame
 from pygame.locals import *
 
-from player import PLayer
+from player import Player
 from border import Border
+from sparx import Sparx
 from qix import Qix
 
 # Initialize pygame library
@@ -43,9 +44,19 @@ def main_loop() -> None:
 
     border = Border(white)
 
-    player = PLayer(blue)
+    player = Player(blue)
     player.traversing_nodes.append(border.nodes[2])
     player.traversing_nodes.append(border.nodes[3])
+
+    sparx1 = Sparx(red, "right")
+    sparx1.traversing_nodes.append(border.nodes[0])
+    sparx1.traversing_nodes.append(border.nodes[1])
+    sparx1.end_node_index = 1
+
+    sparx2 = Sparx(red, "left")
+    sparx2.traversing_nodes.append(border.nodes[1])
+    sparx2.traversing_nodes.append(border.nodes[0])
+    sparx2.end_node_index = 0
 
     qix = Qix(red)
 
@@ -89,6 +100,8 @@ def main_loop() -> None:
         # Render game objects
         border.draw(game_surface)
         player.draw(game_surface)
+        sparx1.draw(game_surface, border)
+        sparx2.draw(game_surface, border)
         qix.draw(game_surface)
 
         # Render game at 60 frames per second

@@ -4,7 +4,7 @@ import random
 
 
 class Qix:
-    # Initialize qix
+    # Initialize Qix
     def __init__(self, color) -> None:
         # Qix color
         self.color = color
