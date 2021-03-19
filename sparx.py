@@ -1,8 +1,9 @@
 import pygame
+from node import Node
 
 
 class Sparx:
-    def __init__(self, color, init_direction) -> None:
+    def __init__(self, color, init_direction, border) -> None:
         # Sparx color
         self.color = color
 
@@ -10,7 +11,7 @@ class Sparx:
         self.radius = 5
 
         # Sparx current position
-        self.x = 400
+        self.x = 150
         self.y = 50
 
         # Fastest speed at which Sparx can travel
@@ -24,8 +25,9 @@ class Sparx:
         self.init_direction = init_direction
 
         # Current nodes that Sparx is moving between
-        self.traversing_nodes = []
-        self.end_node_index = 0
+        self.traversing_nodes = [border.nodes[0], border.nodes[1]] if self.init_direction == "right" else [
+            border.nodes[1], border.nodes[0]]
+        self.end_node_index = 1 if self.init_direction == "right" else 0
 
     # Draw sparx on screen
     def draw(self, surface, border) -> None:
@@ -35,8 +37,9 @@ class Sparx:
     # Move Sparx along the game border
     def move(self, border) -> None:
         # If reached end node then change current traversing nodes accordingly
-        if self.x == self.traversing_nodes[1][0] and self.y == self.traversing_nodes[1][1]:
+        if self.x == self.traversing_nodes[1].x and self.y == self.traversing_nodes[1].y:
             self.traversing_nodes[0] = self.traversing_nodes[1]
+
             if self.init_direction == "right":
                 self.end_node_index = self.end_node_index + \
                     1 if self.end_node_index < len(border.nodes) - 1 else 0
@@ -47,8 +50,8 @@ class Sparx:
             self.traversing_nodes[1] = border.nodes[self.end_node_index]
 
         # Set Sparx velocity based on current traversing nodes
-        x_gap = self.traversing_nodes[1][0] - self.traversing_nodes[0][0]
-        y_gap = self.traversing_nodes[1][1] - self.traversing_nodes[0][1]
+        x_gap = self.traversing_nodes[1].x - self.traversing_nodes[0].x
+        y_gap = self.traversing_nodes[1].y - self.traversing_nodes[0].y
         self.velocity_x = x_gap / \
             abs(x_gap) * self.max_speed if x_gap != 0 else 0
         self.velocity_y = y_gap / \

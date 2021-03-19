@@ -1,9 +1,10 @@
 import pygame
+from node import Node
 
 
 class Player:
     # Initialize Player
-    def __init__(self, color) -> None:
+    def __init__(self, color, border) -> None:
         # Player color
         self.color = color
 
@@ -22,13 +23,10 @@ class Player:
         self.velocity_y = 0
 
         # Current nodes that Player is moving between
-        self.traversing_nodes = []
+        self.traversing_nodes = [border.nodes[2], border.nodes[3]]
 
         # Whether Player can move freely into play field
         self.is_pushing = False
-
-        # Current Player score
-        self.score = 0
 
     # Draw Player on screen
     def draw(self, surface) -> None:
@@ -48,16 +46,16 @@ class Player:
 
     # Move Player
     def move(self) -> None:
-        # Clamp Player to current traversing nodes if not pushing in
+        # Clamp Player to current traversing nodes
         if not self.is_pushing:
-            self.x = max(self.traversing_nodes[0][0], self.traversing_nodes[1][0]
-                         ) if self.x > self.traversing_nodes[0][0] and self.x > self.traversing_nodes[1][0] else self.x
-            self.x = min(self.traversing_nodes[0][0], self.traversing_nodes[1][0]
-                         ) if self.x < self.traversing_nodes[0][0] and self.x < self.traversing_nodes[1][0] else self.x
-            self.y = max(self.traversing_nodes[0][1], self.traversing_nodes[1][1]
-                         ) if self.y > self.traversing_nodes[0][1] and self.y > self.traversing_nodes[1][1] else self.y
-            self.y = min(self.traversing_nodes[0][1], self.traversing_nodes[1][1]
-                         ) if self.y < self.traversing_nodes[0][1] and self.y < self.traversing_nodes[1][1] else self.y
+            self.x = max(self.traversing_nodes[0].x, self.traversing_nodes[1].x
+                         ) if self.x > self.traversing_nodes[0].x and self.x > self.traversing_nodes[1].x else self.x
+            self.x = min(self.traversing_nodes[0].x, self.traversing_nodes[1].x
+                         ) if self.x < self.traversing_nodes[0].x and self.x < self.traversing_nodes[1].x else self.x
+            self.y = max(self.traversing_nodes[0].y, self.traversing_nodes[1].y
+                         ) if self.y > self.traversing_nodes[0].y and self.y > self.traversing_nodes[1].y else self.y
+            self.y = min(self.traversing_nodes[0].y, self.traversing_nodes[1].y
+                         ) if self.y < self.traversing_nodes[0].y and self.y < self.traversing_nodes[1].y else self.y
 
         self.x += self.velocity_x
         self.y += self.velocity_y

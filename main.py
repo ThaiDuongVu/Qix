@@ -29,6 +29,9 @@ white = (238, 238, 238)
 blue = (0, 173, 181)
 red = (236, 70, 70)
 
+# Current game score
+score = 0
+
 clock = pygame.time.Clock()
 
 
@@ -44,19 +47,9 @@ def main_loop() -> None:
 
     border = Border(white)
 
-    player = Player(blue)
-    player.traversing_nodes.append(border.nodes[2])
-    player.traversing_nodes.append(border.nodes[3])
-
-    sparx1 = Sparx(red, "right")
-    sparx1.traversing_nodes.append(border.nodes[0])
-    sparx1.traversing_nodes.append(border.nodes[1])
-    sparx1.end_node_index = 1
-
-    sparx2 = Sparx(red, "left")
-    sparx2.traversing_nodes.append(border.nodes[1])
-    sparx2.traversing_nodes.append(border.nodes[0])
-    sparx2.end_node_index = 0
+    player = Player(blue, border)
+    sparx1 = Sparx(red, "right", border)
+    sparx2 = Sparx(red, "left", border)
 
     qix = Qix(red)
 
@@ -90,9 +83,15 @@ def main_loop() -> None:
                 if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
                     player.stop_moving()
 
-                # If space button released then enable player pushing
+                # If space button released then disable player pushing
                 if event.key == K_SPACE:
                     player.is_pushing = False
+
+        # If a Sparx collide with player then reset positions
+        if (player.x == sparx1.x and player.y == sparx1.y) or (player.x == sparx2.x and player.y == sparx2.y):
+            player.__init__(blue, border)
+            sparx1.__init__(red, "right", border)
+            sparx2.__init__(red, "left", border)
 
         # Fill black background
         game_surface.fill(black)
@@ -113,4 +112,5 @@ def main_loop() -> None:
     quit_game()
 
 
-main_loop()
+if __name__ == "__main__":
+    main_loop()

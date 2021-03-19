@@ -1,4 +1,5 @@
 import pygame
+from node import Node
 
 
 class Border:
@@ -11,10 +12,14 @@ class Border:
         self.thickness = 1
 
         # List of border nodes
-        # Each node is a tuple containing the x and y coordinates
-        self.nodes = [(150, 50), (650, 50), (650, 550), (150, 550)]
+        # Each node is a Node containing the x and y coordinates
+        self.nodes = [Node(150, 50), Node(650, 50), Node(650, 550), Node(150, 550)]
+
+        # List of border lines to draw
+        self.lines = []
 
     # Draw border on screen
     def draw(self, surface) -> None:
+        self.lines = [(node.x, node.y) for node in self.nodes]
         pygame.draw.lines(surface, self.color, True,
-                          self.nodes, width=self.thickness)
+                          self.lines, width=self.thickness)
