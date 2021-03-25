@@ -3,8 +3,13 @@ from node import Node
 
 
 class Player:
+    
     # Initialize Player
     def __init__(self, color, border) -> None:
+        
+        #Player's lives
+        self.health= 3
+        
         # Player color
         self.color = color
 
@@ -27,6 +32,7 @@ class Player:
 
         # Whether Player can move freely into play field
         self.is_pushing = False
+
 
     # Draw Player on screen
     def draw(self, surface) -> None:
@@ -59,3 +65,19 @@ class Player:
 
         self.x += self.velocity_x
         self.y += self.velocity_y
+     
+        
+        
+    def decreaseHealth(self) -> None:
+        self.health= self.health - 1 
+        
+    def resetPosition(self) -> None:
+        self.x = 400
+        self.y = 550
+        
+                
+              
+              
+              
+              
+              
