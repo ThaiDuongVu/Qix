@@ -29,6 +29,8 @@ white = (238, 238, 238)
 blue = (0, 173, 181)
 red = (236, 70, 70)
 
+text_font = pygame.font.Font("font.ttf", 36)
+
 # Current game score
 score = 0
 
@@ -44,6 +46,7 @@ def quit_game() -> None:
 # Main game loop
 def main_loop() -> None:
     game_exit = False
+    game_over = False
 
     border = Border(white)
 
@@ -76,7 +79,10 @@ def main_loop() -> None:
 
                 # If space button down then enable player pushing
                 if event.key == K_SPACE:
-                    player.is_pushing = True
+                    if game_over:
+                        main_loop()
+                    else:
+                        player.is_pushing = True
 
             if event.type == KEYUP:
                 # Stop moving player on arrow keys released
@@ -87,21 +93,27 @@ def main_loop() -> None:
                 if event.key == K_SPACE:
                     player.is_pushing = False
 
-        # If a Sparx collide with player then reset positions
+        # If a Sparx collide with player then game over
         if (player.x == sparx1.x and player.y == sparx1.y) or (player.x == sparx2.x and player.y == sparx2.y):
-            player.__init__(blue, border)
-            sparx1.__init__(red, "right", border)
-            sparx2.__init__(red, "left", border)
+            game_over = True
+        # If the Qix collide with player then game over
+        
 
         # Fill black background
         game_surface.fill(black)
 
         # Render game objects
-        border.draw(game_surface)
-        player.draw(game_surface)
-        sparx1.draw(game_surface, border)
-        sparx2.draw(game_surface, border)
-        qix.draw(game_surface)
+        if not game_over:
+            border.draw(game_surface)
+            player.draw(game_surface)
+            sparx1.draw(game_surface, border)
+            sparx2.draw(game_surface, border)
+            qix.draw(game_surface)
+        else:
+            game_surface.blit(text_font.render(
+                "Game    Over", True, white), [300, 100])
+            game_surface.blit(text_font.render(
+                "Press    Space    to    restart    game", True, white), [140, 200])
 
         # Render game at 60 frames per second
         clock.tick(60)
