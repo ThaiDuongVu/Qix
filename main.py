@@ -30,6 +30,8 @@ white = (238, 238, 238)
 blue = (0, 173, 181)
 red = (236, 70, 70)
 
+text_font = pygame.font.Font("font.ttf", 36)
+
 # Current game score
 score = 0
 
@@ -57,6 +59,7 @@ def check_player_Sparx_Collision(player,sparx1,sparx2) -> bool:
 # Main game loop
 def main_loop() -> None:
     game_exit = False
+    game_over = False
 
     border = Border(white)
 
@@ -90,7 +93,10 @@ def main_loop() -> None:
 
                 # If space button down then enable player pushing
                 if event.key == K_SPACE:
-                    player.is_pushing = True
+                    if game_over:
+                        main_loop()
+                    else:
+                        player.is_pushing = True
 
             if event.type == KEYUP:
                 # Stop moving player on arrow keys released
@@ -100,7 +106,6 @@ def main_loop() -> None:
                 # If space button released then disable player pushing
                 if event.key == K_SPACE:
                     player.is_pushing = False
-
         
         #If Qix collides with player, reset position + health decreases
         if (check_player_Qix_collision(player,qix)):
@@ -115,17 +120,21 @@ def main_loop() -> None:
             player.decreaseHealth()
             player.resetPosition()
             
-        
-        
         # Fill black background
         game_surface.fill(black)
 
         # Render game objects
-        border.draw(game_surface)
-        player.draw(game_surface)
-        sparx1.draw(game_surface, border)
-        sparx2.draw(game_surface, border)
-        qix.draw(game_surface)
+        if not game_over:
+            border.draw(game_surface)
+            player.draw(game_surface)
+            sparx1.draw(game_surface, border)
+            sparx2.draw(game_surface, border)
+            qix.draw(game_surface)
+        else:
+            game_surface.blit(text_font.render(
+                "Game    Over", True, white), [300, 100])
+            game_surface.blit(text_font.render(
+                "Press    Space    to    restart    game", True, white), [140, 200])
 
         # Render game at 60 frames per second
         clock.tick(60)
