@@ -43,20 +43,26 @@ def quit_game() -> None:
     pygame.quit()
     sys.exit()
 
-def check_player_Qix_collision(player,qix) -> bool:
-     d= math.sqrt( (player.x - qix.start_x)** 2 + (player.y - qix.start_y)**2 )
-     if (d <=  qix.radius ):
-         return True
-     return False
 
-def check_player_Sparx_Collision(player,sparx1,sparx2) -> bool:
-    d1= math.sqrt( (player.x - sparx1.x)** 2 + (player.y - sparx1.y)**2 )
-    d2=  math.sqrt( (player.x - sparx2.x)** 2 + (player.y - sparx2.y)**2 )
-    if (d1 <=  sparx1.radius) or (d2 <=  sparx1.radius):
-         return True
+# Check for collision between player and Qix
+def check_player_Qix_collision(player, qix) -> bool:
+    d = math.sqrt((player.x - qix.start_x) ** 2 + (player.y - qix.start_y)**2)
+    if (d <= qix.radius):
+        return True
+    return False
+
+
+# Check for collision between player and 2 Sparxs
+def check_player_Sparx_Collision(player, sparx1, sparx2) -> bool:
+    d1 = math.sqrt((player.x - sparx1.x) ** 2 + (player.y - sparx1.y)**2)
+    d2 = math.sqrt((player.x - sparx2.x) ** 2 + (player.y - sparx2.y)**2)
+    if (d1 <= sparx1.radius) or (d2 <= sparx1.radius):
+        return True
     return False
 
 # Main game loop
+
+
 def main_loop() -> None:
     game_exit = False
     game_over = False
@@ -74,8 +80,7 @@ def main_loop() -> None:
             # Exit game if window closed
             if event.type == QUIT:
                 game_exit = True
- 
-        
+
             if event.type == KEYDOWN:
                 # Quit game when escape key is pressed
                 if event.key == K_ESCAPE:
@@ -106,20 +111,18 @@ def main_loop() -> None:
                 # If space button released then disable player pushing
                 if event.key == K_SPACE:
                     player.is_pushing = False
-        
-        #If Qix collides with player, reset position + health decreases
-        if (check_player_Qix_collision(player,qix)):
+
+        # If Qix collides with player, reset position + health decreases
+        if (check_player_Qix_collision(player, qix)):
             qix.__init__(red)
-            player.decreaseHealth()
-            player.resetPosition()
-            
-        #If Sparc collides with player, reset position + health decreases
+            game_over = True
+
+        # If Sparc collides with player, reset position + health decreases
         if (check_player_Sparx_Collision(player, sparx1, sparx2)):
             sparx1.__init__(red, "right", border)
             sparx2.__init__(red, "left", border)
-            player.decreaseHealth()
-            player.resetPosition()
-            
+            game_over = True
+
         # Fill black background
         game_surface.fill(black)
 
