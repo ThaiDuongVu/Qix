@@ -57,7 +57,7 @@ def check_player_Sparx_Collision(player,sparx1,sparx2) -> bool:
 # Main game loop
 def main_loop() -> None:
     game_exit = False
-
+    
     border = Border(white)
 
     player = Player(blue, border)
@@ -71,8 +71,12 @@ def main_loop() -> None:
             # Exit game if window closed
             if event.type == QUIT:
                 game_exit = True
+                
  
-        
+            #if health==0 then game over 
+            if (player.health == 0):
+                game_exit= True 
+                
             if event.type == KEYDOWN:
                 # Quit game when escape key is pressed
                 if event.key == K_ESCAPE:
