@@ -1,15 +1,16 @@
 import pygame
+from pygame.locals import *
 from node import Node
 
 
 class Player:
-    
+
     # Initialize Player
     def __init__(self, color, border) -> None:
-        
-        #Player's lives
-        self.health= 3
-        
+
+        # Player's lives
+        self.health = 3
+
         # Player color
         self.color = color
 
@@ -33,8 +34,8 @@ class Player:
         # Whether Player can move freely into play field
         self.is_pushing = False
 
-
     # Draw Player on screen
+
     def draw(self, surface) -> None:
         self.move()
         pygame.draw.circle(surface, self.color, (self.x, self.y), self.radius)
@@ -65,19 +66,25 @@ class Player:
 
         self.x += self.velocity_x
         self.y += self.velocity_y
-     
-        
-        
+
+    def check_input_down(self, key) -> None:
+        # Move player with arrow keys
+        if key == K_UP:
+            self.start_moving(0, -1)
+        if key == K_DOWN:
+            self.start_moving(0, 1)
+        if key == K_LEFT:
+            self.start_moving(-1, 0)
+        if key == K_RIGHT:
+            self.start_moving(1, 0)
+    
+    def check_input_up(self, key) -> None:
+        if key == K_UP or key == K_DOWN or key == K_LEFT or key == K_RIGHT:
+            self.stop_moving()
+
     def decreaseHealth(self) -> None:
-        self.health= self.health - 1 
-        
+        self.health = self.health - 1 
+
     def resetPosition(self) -> None:
         self.x = 400
         self.y = 550
-        
-                
-              
-              
-              
-              
-              

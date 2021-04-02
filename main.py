@@ -60,9 +60,8 @@ def check_player_Sparx_Collision(player, sparx1, sparx2) -> bool:
         return True
     return False
 
+
 # Main game loop
-
-
 def main_loop() -> None:
     game_exit = False
     game_over = False
@@ -87,14 +86,7 @@ def main_loop() -> None:
                     game_exit = True
 
                 # Move player with arrow keys
-                if event.key == K_UP:
-                    player.start_moving(0, -1)
-                if event.key == K_DOWN:
-                    player.start_moving(0, 1)
-                if event.key == K_LEFT:
-                    player.start_moving(-1, 0)
-                if event.key == K_RIGHT:
-                    player.start_moving(1, 0)
+                player.check_input_down(event.key)
 
                 # If space button down then enable player pushing
                 if event.key == K_SPACE:
@@ -105,8 +97,7 @@ def main_loop() -> None:
 
             if event.type == KEYUP:
                 # Stop moving player on arrow keys released
-                if event.key == K_UP or event.key == K_DOWN or event.key == K_LEFT or event.key == K_RIGHT:
-                    player.stop_moving()
+                player.check_input_up(event.key)
 
                 # If space button released then disable player pushing
                 if event.key == K_SPACE:
@@ -115,13 +106,16 @@ def main_loop() -> None:
         # If Qix collides with player, reset position + health decreases
         if (check_player_Qix_collision(player, qix)):
             qix.__init__(red)
-            game_over = True
+            sparx1.__init__(red, "right", border)
+            sparx2.__init__(red, "left", border)
+            player.decreaseHealth()
 
         # If Sparc collides with player, reset position + health decreases
         if (check_player_Sparx_Collision(player, sparx1, sparx2)):
+            qix.__init__(red)
             sparx1.__init__(red, "right", border)
             sparx2.__init__(red, "left", border)
-            game_over = True
+            player.decreaseHealth()
 
         # Fill black background
         game_surface.fill(black)
@@ -138,6 +132,9 @@ def main_loop() -> None:
                 "Game    Over", True, white), [300, 100])
             game_surface.blit(text_font.render(
                 "Press    Space    to    restart    game", True, white), [140, 200])
+
+        if player.health <= 0:
+            game_over = True
 
         # Render game at 60 frames per second
         clock.tick(60)
