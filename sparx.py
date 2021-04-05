@@ -1,62 +1,72 @@
 import pygame
-from node import Node
+from pygame.locals import *
+from grid import Grid
+from point import PATH, TRAVERSABLE
 
 
 class Sparx:
-    def __init__(self, color, init_direction, border) -> None:
+    # Initialize sparx
+    def __init__(self, color, init_direction) -> None:
         # Sparx color
         self.color = color
 
-        # Sparx size
-        self.radius = 5
-
         # Sparx current position
-        self.x = 150
-        self.y = 50
+        self.x = 240
+        self.y = 0
 
-        # Fastest speed at which Sparx can travel
-        self.max_speed = 5
-
-        # Current player velocity
+        # Speed at which sparx will move at
         self.velocity_x = 0
         self.velocity_y = 0
+
+        # Sparx size, should be equal to point size (see point.py)
+        self.width = 10
+        self.height = 10
 
         # Initial direction that Sparx will move at, either "right" or "left"
         self.init_direction = init_direction
 
-        # Current nodes that Sparx is moving between
-        self.traversing_nodes = [border.nodes[0], border.nodes[1]] if self.init_direction == "right" else [
-            border.nodes[1], border.nodes[0]]
-        self.end_node_index = 1 if self.init_direction == "right" else 0
+        if self.init_direction == "right":
+            self.velocity_x = 1
+        else:
+            self.velocity_x = -1
 
-    # Draw sparx on screen
-    def draw(self, surface, border) -> None:
-        self.move(border)
-        pygame.draw.circle(surface, self.color, (self.x, self.y), self.radius)
+    # Draw sparx on game surface
+    def draw(self, game_surface, grid: Grid) -> None:
+        self.move(grid)
+        pygame.draw.rect(game_surface, self.color, [
+                         self.x, self.y, self.width, self.height])
 
-    # Move Sparx along the game border
-    def move(self, border) -> None:
-        # If reached end node then change current traversing nodes accordingly
-        if self.x == self.traversing_nodes[1].x and self.y == self.traversing_nodes[1].y:
-            self.traversing_nodes[0] = self.traversing_nodes[1]
+    def change_direction_vertically(self, grid: Grid) -> None:
+        if self.y // self.height + 1 < grid.height and (grid.points[self.x // self.width][self.y // self.height + 1].state == TRAVERSABLE or grid.points[self.x // self.width][self.y // self.height + 1].state == PATH):
+            self.velocity_x = 0
+            self.velocity_y = 1
+        if self.y // self.height - 1 >= 0 and (grid.points[self.x // self.width][self.y // self.height - 1].state == TRAVERSABLE or grid.points[self.x // self.width][self.y // self.height - 1].state == PATH):
+            self.velocity_x = 0
+            self.velocity_y = -1
+    
+    def change_direction_horizontally(self, grid: Grid) -> None:
+        if self.x // self.width + 1 < grid.width and (grid.points[self.x // self.width + 1][self.y // self.height].state == TRAVERSABLE or grid.points[self.x // self.width + 1][self.y // self.height].state == PATH):
+            self.velocity_x = 1
+            self.velocity_y = 0
+        if self.x // self.width - 1 >= 0 and (grid.points[self.x // self.width - 1][self.y // self.height].state == TRAVERSABLE or grid.points[self.x // self.width - 1][self.y // self.height].state == PATH):
+            self.velocity_x = -1
+            self.velocity_y = 0
 
-            if self.init_direction == "right":
-                self.end_node_index = self.end_node_index + \
-                    1 if self.end_node_index < len(border.nodes) - 1 else 0
-            else:
-                self.end_node_index = self.end_node_index - \
-                    1 if self.end_node_index > 0 else len(border.nodes) - 1
+    # Move sparx along grid
+    def move(self, grid: Grid) -> None:
+        # Check next point on grid and change velocity if needed
+        # If sparx is moving to the right and next point is not traversable
+        if self.velocity_x == 1 and (self.x // self.width + 1 >= grid.width or grid.points[self.x // self.width + 1][self.y // self.height].state != TRAVERSABLE):
+            self.change_direction_vertically(grid)
+        # If sparx is moving to the left and next point is not traversable
+        if self.velocity_x == -1 and (self.x // self.width - 1 < 0 or grid.points[self.x // self.width - 1][self.y // self.height].state != TRAVERSABLE):
+            self.change_direction_vertically(grid)
+        # If sparx is moving downward and next point is not traversable
+        if self.velocity_y == 1 and (self.y // self.height + 1 >= grid.height or grid.points[self.x // self.width][self.y // self.height + 1].state != TRAVERSABLE):
+            self.change_direction_horizontally(grid)
+        # If sparx is moving upward and next point is not traversable
+        if self.velocity_y == -1 and (self.y // self.height - 1 < 0 or grid.points[self.x // self.width][self.y // self.height - 1].state != TRAVERSABLE):
+            self.change_direction_horizontally(grid)
 
-            self.traversing_nodes[1] = border.nodes[self.end_node_index]
-
-        # Set Sparx velocity based on current traversing nodes
-        x_gap = self.traversing_nodes[1].x - self.traversing_nodes[0].x
-        y_gap = self.traversing_nodes[1].y - self.traversing_nodes[0].y
-        self.velocity_x = x_gap / \
-            abs(x_gap) * self.max_speed if x_gap != 0 else 0
-        self.velocity_y = y_gap / \
-            abs(y_gap) * self.max_speed if y_gap != 0 else 0
-
-        # Move Sparx at x and y position at current velocity
-        self.x += self.velocity_x
-        self.y += self.velocity_y
+        self.x += self.velocity_x * self.width 
+        self.y += self.velocity_y * self.height

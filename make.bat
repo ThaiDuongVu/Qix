@@ -2,4 +2,4 @@
 @rem if pyinstaller not found then install it with pip
 call pyinstaller --onefile main.py
 call copy icon.png dist
-main.py
+call copy font.ttf dist
