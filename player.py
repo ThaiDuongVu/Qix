@@ -171,7 +171,7 @@ class Player:
                     if down_point[1] < grid.height * self.height and (grid.points[down_point[0] // self.width][down_point[1] // self.height].state == TRAVERSABLE or grid.points[down_point[0] // self.width][down_point[1] // self.height].state == PATH) and down_point not in half_2:
                         point_to_add = down_point
                         continue
-            
+
             # Expand half horizontally
             if self.x == path_end_x:
                 expand_half_horizontally()
@@ -225,6 +225,11 @@ class Player:
 
     # Draw player on game surface
     def draw(self, game_surface, grid: Grid) -> None:
+        # Render player object
+        pygame.draw.rect(game_surface, self.color, [
+                         self.x, self.y, self.width, self.height])
+
+    def move(self, grid: Grid) -> None:
         # Move player on traversable grid if player is not pushing
         if self.velocity_x == 1 and (self.x // self.width) + 1 < grid.width and grid.points[(self.x // self.width) + 1][self.y // self.height].state == TRAVERSABLE:
             self.move_traversable(grid)
@@ -247,7 +252,3 @@ class Player:
                 self.move_unclaimed(grid)
             elif self.velocity_y == -1 and (self.y // self.height) - 1 >= 0 and grid.points[self.x // self.width][(self.y // self.height) - 1].state == UNCLAIMED:
                 self.move_unclaimed(grid)
-
-        # Render player object
-        pygame.draw.rect(game_surface, self.color, [
-                         self.x, self.y, self.width, self.height])

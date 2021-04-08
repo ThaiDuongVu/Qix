@@ -54,8 +54,8 @@ def main_loop() -> None:
 
     grid = Grid(50, 50, blue, black, white, white)
     player = Player(red)
-    sparx1 = Sparx(orange, "right")
-    sparx2 = Sparx(orange, "left")
+    sparx1 = Sparx(red, "right")
+    sparx2 = Sparx(red, "left")
     qix = Qix(orange)
 
     while not game_exit:
@@ -102,43 +102,53 @@ def main_loop() -> None:
                     player.is_pusing = False
 
         # Check collision between player and sparxs
-        if player.x == sparx1.x and player.y == sparx2.y:
-            player.health -= 1
-        if player.x == sparx2.x and player.y == sparx2.y:
-            player.health -= 1
+        if not game_over:
+            qix.move()
+            sparx1.move(grid)
+            sparx2.move(grid)
+            player.move(grid)
 
-        # If player run out of health then game over
-        if player.health <= 0:
-            game_over = True
+            sparx1.check_current_position(player, grid)
+            sparx2.check_current_position(player, grid)
 
-        # If the claimed percentage is higher than 75% then player wins
-        if int(grid.claimed_percent) > 75:
-            game_over = True
-            game_won = True
+            if sparx1.check_collision_player(player) or sparx2.check_collision_player(player):
+                player.health -= 1
+                sparx1.reset_position(player, grid)
+                sparx2.reset_position(player, grid)
+
+            if qix.check_collision_player(player):
+                game_over = True
+
+            # If player run out of health then game over
+            if player.health <= 0:
+                game_over = True
+
+            # If the claimed percentage is higher than 75% then player wins
+            if int(grid.claimed_percent) > 75:
+                game_over = True
+                game_won = True
 
         # Render game objects
-        if not game_over:
-            game_surface.fill(black)
-            grid.draw(game_surface)
-            player.draw(game_surface, grid)
-            sparx1.draw(game_surface, grid)
-            sparx2.draw(game_surface, grid)
-            qix.draw(game_surface)
+        game_surface.fill(black)
+        grid.draw(game_surface)
+        player.draw(game_surface, grid)
+        sparx1.draw(game_surface, grid)
+        sparx2.draw(game_surface, grid)
+        qix.draw(game_surface)
 
-            game_surface.blit(text_font.render(
-                "Claimed    " + str(int(grid.claimed_percent)), True, white), [520, 20])
-            game_surface.blit(text_font.render(
-                "Health        " + str(player.health), True, white), [520, 60])
-        else:
-            game_surface.fill(black)
+        game_surface.blit(text_font.render(
+            "Claimed    " + str(int(grid.claimed_percent)), True, white), [520, 20])
+        game_surface.blit(text_font.render(
+            "Health        " + str(player.health), True, white), [520, 60])
+        if game_over:
             if game_won:
                 game_surface.blit(text_font.render(
-                    "You    Won!", True, white), [300, 100])
+                    "You    Won!", True, white), [300, 510])
             else:
                 game_surface.blit(text_font.render(
-                    "Game    Over", True, white), [300, 100])
+                    "Game    Over", True, white), [300, 510])
             game_surface.blit(text_font.render(
-                "Press    Enter    to    restart    game", True, white), [140, 200])
+                "Press    Enter    to    restart    game", True, white), [140, 550])
 
         # Render game at 60 frames per second
         clock.tick(60)
