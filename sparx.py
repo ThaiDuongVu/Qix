@@ -32,21 +32,29 @@ class Sparx:
     # Draw sparx on game surface
     def draw(self, game_surface, grid: Grid) -> None:
         pygame.draw.rect(game_surface, self.color, [
-                         self.x, self.y, self.width, self.height])
+            self.x, self.y, self.width, self.height])
 
     def change_direction_vertically(self, grid: Grid) -> None:
-        if self.y // self.height + 1 < grid.height and (grid.points[self.x // self.width][self.y // self.height + 1].state == TRAVERSABLE or grid.points[self.x // self.width][self.y // self.height + 1].state == PATH):
+        if self.y // self.height + 1 < grid.height and (
+                grid.points[self.x // self.width][self.y // self.height + 1].state == TRAVERSABLE or
+                grid.points[self.x // self.width][self.y // self.height + 1].state == PATH):
             self.velocity_x = 0
             self.velocity_y = 1
-        if self.y // self.height - 1 >= 0 and (grid.points[self.x // self.width][self.y // self.height - 1].state == TRAVERSABLE or grid.points[self.x // self.width][self.y // self.height - 1].state == PATH):
+        if self.y // self.height - 1 >= 0 and (
+                grid.points[self.x // self.width][self.y // self.height - 1].state == TRAVERSABLE or
+                grid.points[self.x // self.width][self.y // self.height - 1].state == PATH):
             self.velocity_x = 0
             self.velocity_y = -1
 
     def change_direction_horizontally(self, grid: Grid) -> None:
-        if self.x // self.width + 1 < grid.width and (grid.points[self.x // self.width + 1][self.y // self.height].state == TRAVERSABLE or grid.points[self.x // self.width + 1][self.y // self.height].state == PATH):
+        if self.x // self.width + 1 < grid.width and (
+                grid.points[self.x // self.width + 1][self.y // self.height].state == TRAVERSABLE or
+                grid.points[self.x // self.width + 1][self.y // self.height].state == PATH):
             self.velocity_x = 1
             self.velocity_y = 0
-        if self.x // self.width - 1 >= 0 and (grid.points[self.x // self.width - 1][self.y // self.height].state == TRAVERSABLE or grid.points[self.x // self.width - 1][self.y // self.height].state == PATH):
+        if self.x // self.width - 1 >= 0 and (
+                grid.points[self.x // self.width - 1][self.y // self.height].state == TRAVERSABLE or
+                grid.points[self.x // self.width - 1][self.y // self.height].state == PATH):
             self.velocity_x = -1
             self.velocity_y = 0
 
@@ -58,16 +66,20 @@ class Sparx:
 
         # Check next point on grid and change velocity if needed
         # If sparx is moving to the right and next point is not traversable
-        if self.velocity_x == 1 and (self.x // self.width + 1 >= grid.width or grid.points[self.x // self.width + 1][self.y // self.height].state != TRAVERSABLE):
+        if self.velocity_x == 1 and (self.x // self.width + 1 >= grid.width or grid.points[self.x // self.width + 1][
+            self.y // self.height].state != TRAVERSABLE):
             self.change_direction_vertically(grid)
         # If sparx is moving to the left and next point is not traversable
-        if self.velocity_x == -1 and (self.x // self.width - 1 < 0 or grid.points[self.x // self.width - 1][self.y // self.height].state != TRAVERSABLE):
+        if self.velocity_x == -1 and (self.x // self.width - 1 < 0 or grid.points[self.x // self.width - 1][
+            self.y // self.height].state != TRAVERSABLE):
             self.change_direction_vertically(grid)
         # If sparx is moving downward and next point is not traversable
-        if self.velocity_y == 1 and (self.y // self.height + 1 >= grid.height or grid.points[self.x // self.width][self.y // self.height + 1].state != TRAVERSABLE):
+        if self.velocity_y == 1 and (self.y // self.height + 1 >= grid.height or grid.points[self.x // self.width][
+            self.y // self.height + 1].state != TRAVERSABLE):
             self.change_direction_horizontally(grid)
         # If sparx is moving upward and next point is not traversable
-        if self.velocity_y == -1 and (self.y // self.height - 1 < 0 or grid.points[self.x // self.width][self.y // self.height - 1].state != TRAVERSABLE):
+        if self.velocity_y == -1 and (self.y // self.height - 1 < 0 or grid.points[self.x // self.width][
+            self.y // self.height - 1].state != TRAVERSABLE):
             self.change_direction_horizontally(grid)
 
         self.x += self.velocity_x * self.width
@@ -84,7 +96,8 @@ class Sparx:
     def reset_position(self, player: Player, grid: Grid) -> None:
         for x in range(grid.width):
             for y in range(grid.height):
-                if grid.points[x][y].state == TRAVERSABLE and player.x // player.width != x and player.y // player.height != y:
+                if grid.points[x][
+                    y].state == TRAVERSABLE and player.x // player.width != x and player.y // player.height != y:
                     self.x = x * self.width
                     self.y = y * self.height
 

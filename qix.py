@@ -24,7 +24,7 @@ class Qix:
     # Draw Qix on game surface
     def draw(self, game_surface) -> None:
         pygame.draw.rect(game_surface, self.color, [
-                         self.x, self.y, self.width, self.height])
+            self.x, self.y, self.width, self.height])
 
     # Qix move randomly on game screen
     def move(self) -> None:
